@@ -1,0 +1,28 @@
+version: '2'
+services:
+  db:
+    image: mariadb:10
+    container_name: webtrees-db
+    restart: unless-stopped
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=TU4jqty87W2hSzns
+      - MYSQL_DATABASE=webtrees
+      - MYSQL_USER=webtrees
+      - MYSQL_PASSWORD=f3EQ6wpWmDpvWeXd
+  php:
+    build: php/.
+    volumes:
+      - ./webtrees:/webtrees
+      - ./php/log.conf:/usr/local/etc/php-fpm.d/zz-log.conf
+  site:
+    depends_on:
+      - php
+    image: nginx
+    container_name: webtrees-site
+    volumes:
+      - ./webtrees:/webtrees
+      - ./nginx/site.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:80"
